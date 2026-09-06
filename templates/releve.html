@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% import "_macros.html" as ui %}
+{% block title %}Relevé{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1 class="page">Relevé de compte</h1><p class="sub">Historique complet de vos opérations.</p></div>
+</div>
+
+<div class="grid g3 mb">
+  <div class="card stat"><div class="k">Total entrées</div><div class="v" style="color:#059669;">+{{ total_in|eur }}</div></div>
+  <div class="card stat"><div class="k">Total sorties</div><div class="v">{{ total_out|eur }}</div></div>
+  <div class="card stat"><div class="k">Solde net</div><div class="v" style="color:#FF6200;">{{ (total_in + total_out)|eur }}</div></div>
+</div>
+
+<form method="GET" class="card mb" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+  <div class="field" style="flex:1;min-width:200px;">
+    <label>Recherche</label>
+    <input class="input" name="q" value="{{ q }}" placeholder="Libellé, catégorie...">
+  </div>
+  <div class="field" style="min-width:180px;">
+    <label>Compte</label>
+    <select class="input" name="acc">
+      <option value="all" {{ 'selected' if acc == 'all' }}>Tous les comptes</option>
+      {% for a in accounts %}<option value="{{ a.id }}" {{ 'selected' if acc == a.id }}>{{ a.name }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="field" style="min-width:150px;">
+    <label>Type</label>
+    <select class="input" name="type">
+      <option value="all" {{ 'selected' if typ == 'all' }}>Toutes</option>
+      <option value="in" {{ 'selected' if typ == 'in' }}>Entrées</option>
+      <option value="out" {{ 'selected' if typ == 'out' }}>Sorties</option>
+    </select>
+  </div>
+  <button class="btn btn-primary" type="submit">Filtrer</button>
+</form>
+
+<div class="card">
+  {% for t in transactions %}
+  <div class="tx">
+    <div class="l">
+      <div class="ic {{ 'pos' if t.amount > 0 else 'neg' }}">{{ ui.icon('down' if t.amount > 0 else 'up', 16) }}</div>
+      <div><div class="lab">{{ t.label }}</div><div class="meta">{{ t.date }} · {{ t.category }} · {{ t.method }}</div></div>
+    </div>
+    <div class="amt {{ 'pos' if t.amount > 0 else '' }}">{{ '+' if t.amount > 0 }}{{ t.amount|eur }}</div>
+  </div>
+  {% else %}
+  <p class="sub" style="text-align:center;padding:36px 0;">Aucune opération ne correspond à vos filtres.</p>
+  {% endfor %}
+</div>
+{% endblock %}

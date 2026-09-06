@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% import "_macros.html" as ui %}
+{% block title %}Cartes{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1 class="page">Mes cartes</h1><p class="sub">Gérez vos cartes et leurs paramètres.</p></div>
+</div>
+
+<div class="grid g2">
+  <div style="display:flex;flex-direction:column;gap:22px;">
+    {% for c in cards %}
+    <div class="ccard {{ c.variant }}">
+      <div class="top">
+        <div><div style="font-weight:300;opacity:.8;font-size:13px;">ING BANQUE</div><div style="font-weight:900;font-size:18px;">{{ c.label }}</div></div>
+        {{ ui.icon('wifi', 26) }}
+      </div>
+      <div class="chip"></div>
+      <div class="num">{{ c.number }}</div>
+      <div class="bottom">
+        <div><div class="k">Titulaire</div><div style="font-weight:700;font-size:14px;">{{ c.holder }}</div></div>
+        <div><div class="k">Expire</div><div style="font-weight:700;font-size:14px;">{{ c.expiry }}</div></div>
+        <div class="brand-mark">{{ 'Mastercard' if c.variant == 'gold' else 'VISA' }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:22px;">
+    {% for c in cards %}
+    <div class="card">
+      <div class="section-title" style="font-size:15px;text-transform:none;color:#2C2A29;">{{ ui.icon('settings', 18) }} {{ c.label }}</div>
+      <div class="spread" style="padding:6px 0;"><span class="sub">Type</span><strong>{{ c.type }}</strong></div>
+      <div class="spread" style="padding:6px 0;"><span class="sub">Compte rattaché</span><strong>{{ c.linked }}</strong></div>
+      <div class="spread" style="padding:6px 0;"><span class="sub">Sans contact</span><span class="pill {{ 'green' if c.contactless else 'grey' }}">{{ 'Activé' if c.contactless else 'Désactivé' }}</span></div>
+      <div style="margin-top:14px;">
+        <div class="spread" style="margin-bottom:6px;"><span class="sub">Dépenses ce mois</span><strong>{{ c.spent|eur }} / {{ c.ceiling|eur }}</strong></div>
+        <div class="progress"><span style="width:{{ c.usage }}%"></span></div>
+        <p class="meta" style="font-size:12px;color:#a8a29e;margin-top:6px;">{{ c.usage }}% du plafond utilisé</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

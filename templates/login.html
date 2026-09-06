@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% import "_macros.html" as ui %}
+{% block title %}Connexion{% endblock %}
+{% block body %}
+<div class="login">
+  <div class="left">
+    <div class="bg"></div>
+    <div class="logo" style="position:relative;">
+      <div class="mark" style="background:#fff;color:#FF6200;">M</div>
+      <span class="name" style="color:#fff;">ING BANQUE</span>
+    </div>
+    <div>
+      <h1>Votre banque,<br>simple et claire.</h1>
+      <p class="lead">Gérez vos comptes, virements, cartes et épargne en toute sérénité, où que vous soyez.</p>
+      <div class="feat"><div class="ico">{{ ui.icon('shield') }}</div><span>Sécurité renforcée & authentification forte</span></div>
+      <div class="feat"><div class="ico">{{ ui.icon('phone-dev') }}</div><span>Accès mobile et notifications en temps réel</span></div>
+      <div class="feat"><div class="ico">{{ ui.icon('lock') }}</div><span>Vos données protégées et chiffrées</span></div>
+    </div>
+    <p class="copyright">© 2026 Meindjo Banque. Tous droits réservés.</p>
+  </div>
+
+  <div class="right">
+    <div class="form-box">
+      <h1 class="page">Bienvenue</h1>
+      <p class="sub">Connectez-vous à votre espace client Meindjo.</p>
+      <form method="POST" action="{{ url_for('login') }}" style="margin-top:28px;">
+        <div class="field mb">
+          <label>Numéro client</label>
+          <input class="input" name="client" value="{{ user.client_number }}">
+        </div>
+        <div class="field mb">
+          <label>Code secret</label>
+          <input class="input" type="password" name="password" value="123456">
+        </div>
+        <button type="submit" class="btn btn-primary btn-full btn-lg">Se connecter {{ ui.icon('arrow-right', 18) }}</button>
+      </form>
+      <div class="hint">{{ ui.icon('lock', 16) }} Démo : les identifiants sont pré-remplis, cliquez simplement sur « Se connecter ».</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

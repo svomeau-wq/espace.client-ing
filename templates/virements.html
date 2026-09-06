@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% import "_macros.html" as ui %}
+{% block title %}Virements{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1 class="page">Virements</h1><p class="sub">Le bénéficiaire recevra un email de confirmation dès la validation.</p></div>
+</div>
+
+<div class="card" style="max-width:860px;">
+  <div class="section-title" style="font-size:16px;text-transform:none;color:#2C2A29;margin-bottom:20px;">
+    <div class="ico" style="width:40px;height:40px;border-radius:999px;background:#ffedd5;color:#FF6200;display:flex;align-items:center;justify-content:center;">{{ ui.icon('swap') }}</div>
+    Nouveau virement
+  </div>
+
+  <form method="POST" action="{{ url_for('virements') }}">
+    <!-- Expéditeur -->
+    <div class="section-title">{{ ui.icon('user', 16) }} Expéditeur (vous)</div>
+    <div class="form-grid mb">
+      <div class="field"><label>Nom de l'émetteur</label><input class="input" value="{{ USER.full_name }}" disabled></div>
+      <div class="field"><label>Compte / IBAN à débiter</label>
+        <select class="input" name="from_account">
+          {% for a in accounts %}<option value="{{ a.id }}">{{ a.name }} — {{ a.available|eur }} dispo.</option>{% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <!-- Bénéficiaire -->
+    <div class="section-title">{{ ui.icon('building', 16) }} Bénéficiaire</div>
+    <div class="form-grid mb">
+      <div class="field"><label>Prénom *</label><input class="input" name="b_first" value="{{ form.b_first or '' }}" placeholder="Ex : Marie"></div>
+      <div class="field"><label>Nom *</label><input class="input" name="b_last" value="{{ form.b_last or '' }}" placeholder="Ex : Dupont"></div>
+      <div class="field col-span"><label>{{ ui.icon('mail', 13) }} Email du bénéficiaire *</label><input class="input" type="email" name="b_email" value="{{ form.b_email or '' }}" placeholder="beneficiaire@email.com"></div>
+      <div class="field col-span"><label>{{ ui.icon('map', 13) }} Adresse</label><input class="input" name="address" value="{{ form.address or '' }}" placeholder="Ex : 12 rue des Lilas"></div>
+      <div class="field"><label>Ville</label><input class="input" name="city" value="{{ form.city or '' }}" placeholder="Ex : Paris"></div>
+      <div class="field"><label>Pays</label><input class="input" name="country" value="{{ form.country or 'France' }}" placeholder="Ex : France"></div>
+      <div class="field"><label>{{ ui.icon('phone', 13) }} Numéro de téléphone</label><input class="input" name="phone" value="{{ form.phone or '' }}" placeholder="Ex : +33 6 12 34 56 78"></div>
+      <div class="field"><label>BIC / SWIFT</label><input class="input mono" name="bic" value="{{ form.bic or '' }}" placeholder="Ex : BNPAFRPP"></div>
+      <div class="field col-span"><label>IBAN *</label><input class="input mono" name="b_iban" value="{{ form.b_iban or '' }}" placeholder="FR76 ..."></div>
+    </div>
+
+    <!-- Opération -->
+    <div class="section-title">{{ ui.icon('send', 16) }} Opération</div>
+    <div class="form-grid mb">
+      <div class="field"><label>Montant *</label>
+        <div class="money"><input class="input" type="number" step="0.01" min="0" name="amount" value="{{ form.amount or '' }}" placeholder="0,00" style="font-weight:800;font-size:17px;"><span class="cur">€</span></div>
+      </div>
+      <div class="field"><label>Motif (facultatif)</label><input class="input" name="motif" value="{{ form.motif or '' }}" placeholder="Ex : Remboursement, loyer..."></div>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-full btn-lg">Valider le virement {{ ui.icon('arrow-right', 18) }}</button>
+  </form>
+</div>
+
+{% if result %}
+<div class="card mt" style="max-width:860px;border-color:#a7f3d0;background:#f0fdf4;">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div class="ic pos" style="width:44px;height:44px;border-radius:999px;display:flex;align-items:center;justify-content:center;">{{ ui.icon('check', 22) }}</div>
+    <div>
+      <strong style="font-size:17px;">Virement effectué !</strong>
+      <p class="sub" style="margin:2px 0 0;">
+        {% if result.email_sent %}Un email de confirmation a été envoyé à {{ result.email }}.{% else %}Virement enregistré (email non envoyé).{% endif %}
+        &nbsp;Réf : <span class="mono">{{ result.reference }}</span>
+      </p>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

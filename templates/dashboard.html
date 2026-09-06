@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% import "_macros.html" as ui %}
+{% block title %}Tableau de bord{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="sub" style="margin:0;">Bonjour {{ USER.first_name }},</p>
+    <h1 class="page">Votre tableau de bord</h1>
+  </div>
+  <a href="{{ url_for('virements') }}" class="btn btn-primary">{{ ui.icon('plus', 18) }} Nouveau virement</a>
+</div>
+
+<div class="grid g23 mb">
+  <div class="hero">
+    <div class="lbl">Solde total consolidé</div>
+    <div class="amt">{{ total|eur }}</div>
+    <div class="up">{{ ui.icon('trend', 16) }} +4,2% ce mois-ci</div>
+    <div class="mini">
+      {% for a in accounts %}
+      <a href="{{ url_for('comptes', acc=a.id) }}"><div class="t">{{ a.name }}</div><div class="v">{{ a.balance|eur }}</div></a>
+      {% endfor %}
+    </div>
+    <div class="glow"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin:0 0 14px;">Actions rapides</h3>
+    <div class="qa">
+      <a href="{{ url_for('virements') }}"><div class="ico">{{ ui.icon('swap') }}</div><span class="lbl">Virement</span></a>
+      <a href="{{ url_for('cartes') }}"><div class="ico">{{ ui.icon('card') }}</div><span class="lbl">Mes cartes</span></a>
+      <a href="{{ url_for('epargne') }}"><div class="ico">{{ ui.icon('piggy') }}</div><span class="lbl">Épargne</span></a>
+      <a href="{{ url_for('releve') }}"><div class="ico">{{ ui.icon('file') }}</div><span class="lbl">Relevé</span></a>
+    </div>
+  </div>
+</div>
+
+<div class="grid g2 mb">
+  <div class="card">
+    <h3 style="margin:0 0 16px;">Dépenses par catégorie</h3>
+    <div class="donut-wrap">
+      <div class="donut" style="background: conic-gradient({% for s in segments %}{{ s.color }} {{ s.start }}% {{ s.end }}%{{ ', ' if not loop.last }}{% endfor %});">
+        <div class="hole"><span class="s">Ce mois</span><span class="v">{{ spending_total|eur }}</span></div>
+      </div>
+      <div class="legend">
+        {% for s in spending %}
+        <div class="row"><span><span class="dot" style="background:{{ s.color }}"></span>{{ s.category }}</span><strong>{{ s.amount|eur }}</strong></div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="spread" style="margin-bottom:10px;">
+      <h3 style="margin:0;">Entrées & sorties</h3>
+      <div style="font-size:12px;display:flex;gap:12px;">
+        <span><span class="dot" style="background:#FF6200;display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:4px;"></span>Entrées</span>
+        <span><span class="dot" style="background:#d6d3d1;display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:4px;"></span>Sorties</span>
+      </div>
+    </div>
+    <div class="bars">
+      {% for f in flow %}
+      <div class="col">
+        <div class="stack">
+          <div class="bar in" style="height:{{ (f.income / flow_max * 100)|round(0,'floor') }}%"></div>
+          <div class="bar out" style="height:{{ (f.expense / flow_max * 100)|round(0,'floor') }}%"></div>
+        </div>
+        <span class="m">{{ f.month }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="spread" style="margin-bottom:8px;">
+    <h3 style="margin:0;">Dernières opérations</h3>
+    <a href="{{ url_for('releve') }}" class="link">Voir le relevé →</a>
+  </div>
+  {% for t in transactions %}
+  <div class="tx">
+    <div class="l">
+      <div class="ic {{ 'pos' if t.amount > 0 else 'neg' }}">{{ ui.icon('down' if t.amount > 0 else 'up', 18) }}</div>
+      <div><div class="lab">{{ t.label }}</div><div class="meta">{{ t.category }} · {{ t.date }}</div></div>
+    </div>
+    <div class="amt {{ 'pos' if t.amount > 0 else '' }}">{{ '+' if t.amount > 0 }}{{ t.amount|eur }}</div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

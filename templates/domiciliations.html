@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% import "_macros.html" as ui %}
+{% block title %}Domiciliations{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1 class="page">Domiciliations</h1><p class="sub">Vos prélèvements automatiques et abonnements récurrents.</p></div>
+</div>
+
+<div class="grid g3 mb">
+  <div class="card stat"><div class="k">{{ ui.icon('repeat', 15) }} Prélèvements actifs</div><div class="v">{{ count }}</div></div>
+  <div class="card stat"><div class="k">Total mensuel</div><div class="v" style="color:#FF6200;">{{ monthly|eur }}</div></div>
+  <div class="card stat"><div class="k">Estimé sur 12 mois</div><div class="v">{{ (monthly * 12)|eur }}</div></div>
+</div>
+
+<div class="card">
+  <h3 style="margin:0 0 14px;">Tous les prélèvements</h3>
+  {% for d in domiciliations %}
+  <div class="tx" style="border:1px solid #e7e5e4;border-radius:12px;padding:14px;margin-bottom:10px;{{ 'opacity:.65;background:#fafaf9;' if not d.active }}">
+    <div class="l">
+      <div class="ic neg" style="width:44px;height:44px;">{{ ui.icon('repeat') }}</div>
+      <div>
+        <div class="lab">{{ d.name }} {% if not d.active %}<span class="pill grey">En pause</span>{% endif %}</div>
+        <div class="meta">{{ d.category }} · {{ d.frequency }} · Prochain : {{ d.next }}</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <strong>{{ d.amount|eur }}</strong>
+      <span class="pill {{ 'green' if d.active else 'grey' }}">{{ 'Actif' if d.active else 'En pause' }}</span>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

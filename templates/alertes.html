@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% import "_macros.html" as ui %}
+{% block title %}Alertes{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1 class="page" style="display:flex;align-items:center;gap:8px;">{{ ui.icon('bell', 26) }} Alertes</h1>
+  <p class="sub">{% if UNREAD %}Vous avez {{ UNREAD }} notification(s) non lue(s).{% else %}Vous êtes à jour.{% endif %}</p></div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px;">
+  {% for a in alerts %}
+  <div class="card alert-item {{ 'unread' if not a.read }}">
+    <div class="ico {{ a.type }}">{{ ui.icon('info' if a.type == 'info' else ('check' if a.type == 'success' else 'bell')) }}</div>
+    <div style="flex:1;">
+      <div style="display:flex;align-items:center;gap:8px;"><strong>{{ a.title }}</strong>{% if not a.read %}<span class="dot" style="width:8px;height:8px;border-radius:999px;background:#FF6200;display:inline-block;"></span>{% endif %}</div>
+      <p class="sub" style="margin:2px 0 0;">{{ a.message }}</p>
+      <p class="meta" style="font-size:12px;color:#a8a29e;margin-top:4px;">{{ a.date }}</p>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

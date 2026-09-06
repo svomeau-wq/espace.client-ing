@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% import "_macros.html" as ui %}
+{% block title %}Crédit{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1 class="page">Crédit & Prêts</h1><p class="sub">Suivez vos crédits en cours et découvrez nos offres.</p></div>
+</div>
+
+<div class="grid g3 mb">
+  <div class="card stat"><div class="k">Capital restant dû</div><div class="v">{{ total_remaining|eur }}</div></div>
+  <div class="card stat"><div class="k">Mensualités totales</div><div class="v" style="color:#FF6200;">{{ total_monthly|eur }}</div></div>
+  <div class="card stat"><div class="k">Crédits en cours</div><div class="v">{{ credits|length }}</div></div>
+</div>
+
+<div class="grid g2 mb">
+  {% for c in credits %}
+  <div class="card">
+    <div class="spread">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="ic" style="width:44px;height:44px;border-radius:999px;background:#2C2A29;color:#fff;display:flex;align-items:center;justify-content:center;">{{ ui.icon('home' if c.type == 'Immobilier' else 'car') }}</div>
+        <div><div style="font-weight:800;">{{ c.name }}</div><div class="meta">Taux {{ c.rate }}% · Fin {{ c.end }}</div></div>
+      </div>
+      <strong style="color:#FF6200;">{{ c.progress }}%</strong>
+    </div>
+    <div class="progress" style="margin-top:14px;"><span style="width:{{ c.progress }}%"></span></div>
+    <div class="form-grid" style="margin-top:18px;gap:12px;">
+      <div><div class="sub" style="font-size:13px;">Capital emprunté</div><strong>{{ c.borrowed|eur }}</strong></div>
+      <div><div class="sub" style="font-size:13px;">Restant dû</div><strong>{{ c.remaining|eur }}</strong></div>
+      <div><div class="sub" style="font-size:13px;">Mensualité</div><strong>{{ c.monthly|eur }}</strong></div>
+      <div><div class="sub" style="font-size:13px;">Prochaine échéance</div><strong>{{ c.next }}</strong></div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="card">
+  <div class="section-title" style="font-size:15px;text-transform:none;color:#2C2A29;">{{ ui.icon('bank', 18) }} Nos offres de prêt</div>
+  <div class="grid g3">
+    {% for o in offers %}
+    <div class="card" style="border-color:#e7e5e4;">
+      <div class="spread"><strong>{{ o.name }}</strong><span class="pill green">dès {{ o.rate }}%</span></div>
+      <p class="sub" style="margin:8px 0;">{{ o.desc }}</p>
+      <p class="meta" style="font-size:12px;color:#a8a29e;">Jusqu'à {{ o.max_amount|eur }} · {{ o.max_duration }} mois max.</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
