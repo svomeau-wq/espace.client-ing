@@ -32,9 +32,9 @@ USER = {
     "first_name": "FREDERICK",
     "last_name": "ROUSELLE",
     "full_name": "FREDERICK ROUSSELLE",
-    "client_number": "990303",
+    "client_number": "****",
     "email": "fredericrousselles01@gmail.com",
-    "password": "0275",  # démo uniquement
+    "password": "****",  
 }
 
 ACCOUNTS = [
